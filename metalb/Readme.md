@@ -4,7 +4,8 @@
 - K8s version more than 1.13.0
 - Document:
   - https://metallb.universe.tf/#requirements
-##Step 1: Install metallb 
+
+## Step 1: Install metallb 
 ### Download file setup yaml 
 ```
 root@lvthao:~/lab# mkdir metalb
@@ -38,10 +39,13 @@ deployment.apps/controller created
 daemonset.apps/speaker created
 validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
 ```
+```
+
 
 ## Step2:  Setup metalb config. 
 
 We will setup layer2 configuration. This will create a LB pool which will assign the IP of loadbalancer to the service.  https://metallb.universe.tf/configuration/
+
 ```
 root@lvthao:~/lab/metalb#  touch metallb-config.yaml
 
@@ -64,7 +68,7 @@ spec:
   - metallb-pool
 ```
 
-##Step3: Test with loadbalancing service
+## Step3: Test with loadbalancing service
 ```
 apiVersion: v1
 kind: Namespace
@@ -109,14 +113,11 @@ spec:
   type: LoadBalancer
 ```
 
-##Step4: Verify LB
+## Step4: Verify LB
 ```
 root@lvthao:~/lab/metalb# k get svc -n  kube-demo-lb
 NAME           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
 kube-demo-lb   LoadBalancer   10.105.110.66   192.168.1.241   80:30266/TCP   22m
-```
-
-```
 
 root@lvthao:~/lab/metalb# curl -I 192.168.1.241:80
 HTTP/1.1 200 OK
