@@ -38,8 +38,6 @@ service/webhook-service created
 deployment.apps/controller created
 daemonset.apps/speaker created
 validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
-```
-```
 
 
 ## Step2:  Setup metalb config. 
