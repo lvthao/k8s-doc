@@ -15,15 +15,6 @@ spec:
             name: hello-world-service-red
             port: 
               number: 4242
-  ingressClassName: nginx
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ingress-namebased-blue
-spec:
-  ingressClassName: nginx
-  rules:
   - host: blue.example.com
     http:
       paths:
@@ -34,11 +25,3 @@ spec:
             name: hello-world-service-blue
             port: 
               number: 4343
-  ingressClassName: nginx
----
-apiVersion: networking.k8s.io/v1
-kind: IngressClass
-metadata:
-  name: nginx
-spec:
-  controller: k8s.io/ingress-nginx
