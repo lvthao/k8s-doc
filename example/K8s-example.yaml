@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-example
+  labels:
+    app: nginx-example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-example
+  template:
+    metadata:
+      labels:
+        app: nginx-example
+    spec:
+      # node selector
+      nodeName: worker01
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+      env:
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: nginx-config
+              key: log_level
+    # resource request 
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+        ephemeral-storage: "1Gi"
+      limits:
+        memory: "128Mi"
+        cpu: "200m"
+        ephemeral-storage: "2Gi"
+    # healthcheck 
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+    readnessProbe:
+      httpGet:
+        path: /
+        port: 80
+    # Security 
+    securityContext:
+      allowPrivilegeEscalation: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    # Volume 
+    volumeMounts:
+    - name: ephemeral
+      mountPath: "/tmp"
+    - name: secret-volume
+      mountPath: /etc/secret-volume
+      readOnly: true
+  volumes:
+    - name: ephemeral
+      emptyDir:
+        sizeLimit: 500Mi
+    - name: secret-volume
+      secret:
+        secretName: test-secret
+  # Service Account
+  serviceAccountName: sa-nginx-example
+  # tolerant
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+
+
+# Service ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-example
+  labels:
+    run: nginx-example
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: nginx-example
+---
+# Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-nginx-example
+automountServiceAccountToken: false
+---
+# Configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  log_level: INFO
+# Secrets
+# kubectl create secret generic test-secret --from-literal=username='my-app' --from-literal=password='39528$vdg7Jb'
