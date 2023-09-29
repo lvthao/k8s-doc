@@ -21,6 +21,8 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: regcred
       env:
         - name: LOG_LEVEL
           valueFrom:
@@ -106,5 +108,8 @@ metadata:
   name: nginx-config
 data:
   log_level: INFO
+
 # Secrets
 # kubectl create secret generic test-secret --from-literal=username='my-app' --from-literal=password='39528$vdg7Jb'
+# Docker credential
+# kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
