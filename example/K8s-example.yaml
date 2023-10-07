@@ -44,7 +44,7 @@ spec:
       httpGet:
         path: /
         port: 80
-    readnessProbe:
+    readinessProbe:
       httpGet:
         path: /
         port: 80
