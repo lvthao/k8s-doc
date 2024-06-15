@@ -1,0 +1,25 @@
+apiVersion:  networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-path-lablocal
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: lab.local
+      http:
+        paths:
+        - path: /argo
+          pathType: Prefix
+          backend:
+            service:
+              name: argocd-server
+              port:
+                number: 80
+        - path: /graphana
+          pathType: Prefix
+          backend:
+            service:
+              name: loki-grafana
+              port:
+                number: 80
+
