@@ -12,11 +12,16 @@ swapoff -a
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-cat << EOF | tee /etc/apt/sources.list.d/kubernetes.list
-deb https://apt.kubernetes.io/ kubernetes-xenial main
-EOF
+sudo mkdir -p -m 755 /etc/apt/keyrings
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
 
 apt-get update
 
@@ -53,7 +58,7 @@ sudo systemctl enable containerd
 ```
 ### Install package kubeadm 
 ```
-sudo apt-get install kubelet=1.26.0-00 kubeadm=1.26.0-00 kubectl=1.26.0-00
+sudo apt-get install kubelet=1.29.0-1.1 kubeadm=1.29.0-1.1 kubectl=1.29.0-1.1
 sudo apt-mark hold containerd kubelet kubeadm kubectl
    
 sudo systemctl enable kubelet
@@ -61,7 +66,7 @@ sudo systemctl enable kubelet
 ```
 ### Init cluster 
 ```
-kubeadm config images pull --image-repository=registry.k8s.io --cri-socket unix:///run/containerd/containerd.sock --kubernetes-version v1.26.0
+kubeadm config images pull --image-repository=registry.k8s.io --cri-socket unix:///run/containerd/containerd.sock --kubernetes-version v1.29.0
 
 kubeadm init --pod-network-cidr=10.244.0.0/16  --cri-socket unix:///run/containerd/containerd.sock --kubernetes-version 1.26.3
 
@@ -150,7 +155,7 @@ sudo systemctl enable containerd
 ```
 ### Install package kubeadm 
 ```
-sudo apt-get install kubelet=1.26.0-00 kubeadm=1.26.0-00 kubectl=1.26.0-00
+sudo apt-get install kubelet=1.29.0-1.1 kubeadm=1.29.0-1.1 kubectl=1.29.0-1.1
 sudo apt-mark hold containerd kubelet kubeadm kubectl
    
 sudo systemctl enable kubelet
